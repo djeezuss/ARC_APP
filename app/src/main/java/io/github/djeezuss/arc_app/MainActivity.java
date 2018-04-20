@@ -7,13 +7,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import java.net.Inet4Address;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
+import java.net.*;
 import java.util.Enumeration;
 
 public class MainActivity extends AppCompatActivity {
+
+    private ServerSocket serverSocket;
+    private Thread thread;
+    private TextView lb_connected;
+
     @Nullable
     public static String getLocalIpAddress() {
         try {

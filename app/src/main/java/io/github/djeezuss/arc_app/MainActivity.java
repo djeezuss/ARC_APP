@@ -15,14 +15,22 @@ import java.util.Enumeration;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static final int SERVERPORT = 8080;
+    public static final int SERVER_PORT = 8080;
+    public static MainActivity INSTANCE;
 
-    public static ServerSocket serverSocket;
-    public static Handler UIHandler;
-    public static Thread thread;
+    public ServerSocket serverSocket;
+    public Handler UIHandler;
+    public Thread thread;
+    public ISendMessage clientShip;
 
-    public  static TextView lb_connected;
-    private static TextView lb_IPAdrre;
+    public  TextView lb_connected;
+    private TextView lb_IPAdrre;
+
+    private  TextView tb_coordX;
+    private  TextView tb_coordY;
+    private  TextView tb_coordZ;
+
+    private Button   bt_submit;
 
     @Nullable
     public static String getLocalIpAddress() {
@@ -42,35 +50,51 @@ public class MainActivity extends AppCompatActivity {
         return null;
     }
 
+    public String getCoordinates()
+    {
+        return  this.tb_coordX.getText() + " " + this.tb_coordY.getText() + " " + this.tb_coordZ.getText();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        INSTANCE = this;
+
         lb_connected = this.findViewById(R.id.lb_connected);
-        lb_IPAdrre = this.findViewById(R.id.lb_IPAddre);
+        lb_IPAdrre   = this.findViewById(R.id.lb_IPAddre);
+
+        tb_coordX = this.findViewById(R.id.tb_coordX);
+        tb_coordY = this.findViewById(R.id.tb_coordY);
+        tb_coordZ = this.findViewById(R.id.tb_coordZ);
 
         UIHandler = new Handler();
 
-        // Shows the IP address of the device
-        lb_IPAdrre.setText(getLocalIpAddress() + ":" + SERVERPORT);
-
-        // Add a onClick event on bt_submit
-        final Button bt_submit = findViewById(R.id.bt_submit);
-        bt_submit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-
         try {
-            serverSocket = new ServerSocket(SERVERPORT, 0, null);
+            serverSocket = new ServerSocket();
+            serverSocket.bind(new InetSocketAddress(getLocalIpAddress(), SERVER_PORT));
+
+            String text = serverSocket.getInetAddress().getHostAddress() + ":" + serverSocket.getLocalPort();
+            lb_IPAdrre.setText(text);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        thread = new Thread(new ServerThread(SERVERPORT));
+        ServerThread serverThread = new ServerThread();
+        this.clientShip = serverThread;
+        thread = new Thread(serverThread);
         thread.start();
+
+        // Add a onClick event on bt_submit
+        bt_submit = this.findViewById(R.id.bt_submit);
+        bt_submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(clientShip != null) {
+                    clientShip.sendMessage(getCoordinates() + "\n");
+                }
+            }
+        });
     }
 }

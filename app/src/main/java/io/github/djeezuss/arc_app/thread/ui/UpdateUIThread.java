@@ -11,6 +11,6 @@ public class UpdateUIThread implements Runnable {
 
     @Override
     public void run() {
-        MainActivity.lb_connected.setText("MSG : " + msg + "\n");
+        MainActivity.INSTANCE.lb_connected.setText("[" + msg + "]");
     }
 }

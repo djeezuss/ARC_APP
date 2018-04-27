@@ -1,31 +1,37 @@
 package io.github.djeezuss.arc_app.thread;
 
+import io.github.djeezuss.arc_app.ISendMessage;
 import io.github.djeezuss.arc_app.MainActivity;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.net.Socket;
 
-public class ServerThread implements Runnable {
+public class ServerThread implements Runnable, ISendMessage {
 
     private Socket socket;
-    private int port;
-
-    public ServerThread(int port) {
-        this.port = port;
-    }
+    private ClientThread clientThread;
 
     @Override
     public void run() {
         while(!Thread.currentThread().isInterrupted())
         {
             try {
-                socket = MainActivity.serverSocket.accept();
+                socket = MainActivity.INSTANCE.serverSocket.accept();
 
-                new Thread( new ClientThread(socket)).start();
+                clientThread = new ClientThread(socket);
+                new Thread(clientThread).start();
                 return;
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public void sendMessage(String msg) {
+        if (clientThread != null)
+            clientThread.sendMessage(msg);
     }
 }

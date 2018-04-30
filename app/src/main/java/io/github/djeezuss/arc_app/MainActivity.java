@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
 
     public  TextView lb_connected;
     private TextView lb_IPAdrre;
+    public  TextView lb_info;
 
     private  TextView tb_coordX;
     private  TextView tb_coordY;
@@ -64,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
 
         lb_connected = this.findViewById(R.id.lb_connected);
         lb_IPAdrre   = this.findViewById(R.id.lb_IPAddre);
+        lb_info      = this.findViewById(R.id.lb_info);
 
         tb_coordX = this.findViewById(R.id.tb_coordX);
         tb_coordY = this.findViewById(R.id.tb_coordY);
@@ -92,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(clientShip != null) {
-                    clientShip.sendMessage(getCoordinates() + "\n");
+                    clientShip.sendMessage(getCoordinates());
                 }
             }
         });

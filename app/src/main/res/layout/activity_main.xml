@@ -109,7 +109,7 @@
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
         android:text="@string/connect_to_phone"
-        app:fontFamily="monospace"
+        android:fontFamily="monospace"
         app:layout_constraintBottom_toTopOf="@+id/bt_submit"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

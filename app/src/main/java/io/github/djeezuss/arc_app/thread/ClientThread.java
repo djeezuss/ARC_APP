@@ -24,6 +24,7 @@ public class ClientThread implements Runnable, ISendMessage {
         try {
             input  = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             output = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
+
         } catch (IOException e) { e.printStackTrace(); }
     }
 
@@ -50,7 +51,7 @@ public class ClientThread implements Runnable, ISendMessage {
     @Override
     public void sendMessage(String msg) {
         try {
-            output.write(msg.toCharArray());
+            clientSocket.getOutputStream().write(msg.getBytes());
         } catch (IOException e) {
             e.printStackTrace();
         }

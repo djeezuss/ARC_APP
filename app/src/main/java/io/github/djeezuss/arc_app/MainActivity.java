@@ -21,9 +21,14 @@ public class MainActivity extends AppCompatActivity {
     public ServerSocket serverSocket;
     public Handler UIHandler;
     public Thread thread;
+
+    private ServerThread serverThread;
     public ISendMessage clientShip;
+//    private ServerAsyncTask serverTask;
+//    public ClientSendAsyncTask clientTask;
 
     public  TextView lb_connected;
+    public  TextView lb_messages;
     private TextView lb_IPAdrre;
     public  TextView lb_info;
 
@@ -53,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
 
     public String getCoordinates()
     {
-        return  this.tb_coordX.getText() + " " + this.tb_coordY.getText() + " " + this.tb_coordZ.getText();
+        return this.tb_coordX.getText() + " " + this.tb_coordY.getText() + " " + this.tb_coordZ.getText();
     }
 
     @Override
@@ -64,12 +69,15 @@ public class MainActivity extends AppCompatActivity {
         INSTANCE = this;
 
         lb_connected = this.findViewById(R.id.lb_connected);
+        lb_messages  = this.findViewById(R.id.lb_messages);
         lb_IPAdrre   = this.findViewById(R.id.lb_IPAddre);
         lb_info      = this.findViewById(R.id.lb_info);
 
         tb_coordX = this.findViewById(R.id.tb_coordX);
         tb_coordY = this.findViewById(R.id.tb_coordY);
         tb_coordZ = this.findViewById(R.id.tb_coordZ);
+
+        bt_submit = this.findViewById(R.id.bt_submit);
 
         UIHandler = new Handler();
 
@@ -83,19 +91,31 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        ServerThread serverThread = new ServerThread();
-        this.clientShip = serverThread;
+        //serverTask = new ServerAsyncTask(serverSocket);
+        //serverTask.execute();
+
+        serverThread = new ServerThread();
+
         thread = new Thread(serverThread);
         thread.start();
 
         // Add a onClick event on bt_submit
-        bt_submit = this.findViewById(R.id.bt_submit);
         bt_submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(clientShip != null) {
-                    clientShip.sendMessage(getCoordinates());
+                if(serverThread.socket != null)
+                {
+                    serverThread.sendMessage(getCoordinates());
+                    serverThread.startClientThread();
                 }
+
+
+               /* String msg = getCoordinates();
+                if (clientTask != null && msg.length() > 2)
+                {
+                    clientTask.setMsg(msg);
+                    clientTask.execute();
+                }*/
             }
         });
     }
